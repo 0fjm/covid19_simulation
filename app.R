@@ -9,42 +9,63 @@
 
 library(shiny)
 
-# Define UI 
-# fluidPage is RCode, By clicking Run App, or prcoessing runApp() (from the console), it gets converted into CSS and HTML that defines the layout
-
+# Define UI for application that draws a histogram
 ui <- fluidPage(
-
-    # Application title
-    titlePanel("Covid 19 Simulation"),
-
-    # Sidebar with a slider input for number of bins 
-    sidebarLayout(
+    
+    verticalLayout(
         sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
+            sliderInput("n",
+                        "Number of People in the Office:",
                         min = 1, #Min Value of the Slider
-                        max = 50, #Max Value 
-                        value = 1) #Startwert
+                        max = 10, #Max Value 
+                        value = 4) #Startwert
         ),
-
-        # Show a plot of the generated distribution
-        mainPanel(
-           plotOutput("distPlot")
+        sidebarPanel(
+            selectInput("masks",
+                        "Masks:",
+                        c("No Mask" = "No",
+                          "OP Mask" = "OP",
+                          "FFP2 Mask" = "FFP"
+                          )),
+            
+                        
+                        
+        ),
+        sidebarPanel(
+            selectInput("air",
+                        "Air Ventilation in the Room",
+                        c(
+                            "None" = "no",
+                            "Window cracked open" = "wo",
+                            "Brief active ventilation for min 10min./hr." = "br",
+                            "Ventilation system" = "vs"
+                        ))
         )
+    ),
+    mainPanel(
+        textOutput("masks"),
+        plotOutput("n")
     )
+    
+    
+    
 )
 
-# Define server logic required to draw a histogram.
-# Code Written here is mostly for transforming data or creating visualizations
+
 server <- function(input, output) {
-
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
+    
+    output$masks <- renderText(
+        {
+            paste("You have chosen:", input$masks)
+        }
+    )
+    output$n <- renderPlot({
+        # generate n based on input$n from ui.R
         x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
+        n <- seq(min(x), max(x), length.out = input$n + 1)
+        
+        # draw the histogram with the specified number of n
+        hist(x, breaks = n, col = 'darkgray', border = 'white')
     })
 }
 
