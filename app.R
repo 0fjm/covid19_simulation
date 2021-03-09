@@ -6,68 +6,90 @@
 #
 #    http://shiny.rstudio.com/
 #
-
 library(shiny)
+library (dplyr)
+library (ggplot2)
+#library(gapminder)
+
 
 # Define UI for application that draws a histogram
-ui <- fluidPage(
-    
-    verticalLayout(
+ui <- shinyUI(fluidPage(
+    titlePanel("Covid19-Simulation"),
+    sidebarLayout(
+        position = "left",
         sidebarPanel(
-            sliderInput("n",
-                        "Number of People in the Office:",
-                        min = 1, #Min Value of the Slider
-                        max = 10, #Max Value 
-                        value = 4) #Startwert
-        ),
-        sidebarPanel(
-            selectInput("masks",
-                        "Masks:",
-                        c("No Mask" = "No",
-                          "OP Mask" = "OP",
-                          "FFP2 Mask" = "FFP"
-                          )),
+            "sidebar panel",
+            sliderInput(
+                "n",
+                "Number of People in the Office:",
+                min = 1,
+                #Min Value of the Slider
+                max = 10,
+                #Max Value
+                value = 4
+            ),
+            #Startwert
             
-                        
-                        
+            
+            selectInput(
+                "masks",
+                "What masks do you wear in the office?",
+                c(
+                    "No Mask" = "No",
+                    "OP Mask" = "OP",
+                    "FFP2 Mask" = "FFP"
+                )
+            ),
+            
+            selectInput(
+                "air",
+                "Air Ventilation in the Room (Funktioniert noch nicht, muss berechnet werden --> Platzhalter aktuell",
+                c(
+                    "None" = "no",
+                    "Window cracked open" = "wo",
+                    "Brief active ventilation for min 10min./hr." = "br",
+                    "Ventilation system" = "vs"
+                )
+            )
         ),
-        sidebarPanel(
-            selectInput("air",
-                        "Air Ventilation in the Room",
-                        c(
-                            "None" = "no",
-                            "Window cracked open" = "wo",
-                            "Brief active ventilation for min 10min./hr." = "br",
-                            "Ventilation system" = "vs"
-                        ))
-        )
-    ),
-    mainPanel(
-        textOutput("masks"),
-        plotOutput("n")
+        mainPanel(plotOutput("plot1"),
+                  textOutput("text1"),
+                  plotOutput("plot2"))
     )
-    
-    
-    
-)
+))
 
 
 server <- function(input, output) {
+    #ran
     
-    output$masks <- renderText(
-        {
-            paste("You have chosen:", input$masks)
+    output$text1 <- renderText({
+        if (input$masks == "No") {
+            ar <- "40%"
+        } else if (input$masks == "OP") {
+            ar <- "20%"
+        } else if (input$masks == "FFP") {
+            ar <- "5%"
         }
-    )
-    output$n <- renderPlot({
-        # generate n based on input$n from ui.R
-        x    <- faithful[, 2]
-        n <- seq(min(x), max(x), length.out = input$n + 1)
         
-        # draw the histogram with the specified number of n
-        hist(x, breaks = n, col = 'darkgray', border = 'white')
+        
+        paste(c("Dein Ansteckungsrisiko: ", ar), collapse = "")
+    })
+    
+    output$plot1 <- renderPlot({
+        
+        y<-runif(50,2,8)
+        plot(y,exp(y))
+        
+        
+        if (FALSE) {
+        x <- input$n
+        y <- (input$n ^ 2)
+        
+        ggplot(data = NULL , aes(x , y)) + geom_line()
+        }
+        
     })
 }
 
-# Run the application 
+# Run the application
 shinyApp(ui = ui, server = server)
