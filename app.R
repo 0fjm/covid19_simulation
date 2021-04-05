@@ -11,7 +11,15 @@ library (dplyr)
 library (ggplot2)
 library(shinyWidgets)
 #library(gapminder)
+library(rsconnect)
 
+if (FALSE) {
+rsconnect::setAccountInfo(name='fau-erl-nue', token='C4C6D39B6531E5AE28F944B0A52708F6', secret='FQ3hc7iXUqgrlruHsMOApt4AMc7npUFsgVX2qtl8')
+
+rsconnect::deployApp(getwd())
+
+rsconnect::showLogs()
+}
 
 # Define UI for application that draws a histogram
 ui <- shinyUI(fluidPage(
@@ -95,9 +103,9 @@ ui <- shinyUI(fluidPage(
     mainPanel(
       htmlOutput("text3"),
       htmlOutput("text1"),
-      imageOutput("imtage"),
-      htmlOutput("text5"),
-      htmlOutput("text4"),
+      #imageOutput("imtage"),
+      #htmlOutput("text5"),
+      #htmlOutput("text4"),
       plotOutput("text2")
     ),
     
@@ -863,6 +871,20 @@ server <- function(input, output, session) {
     
     
   })
+  
+
+  output$image <- renderImage({
+    
+    input3 = '3'
+    filename <- normalizePath(file.path('./images',
+                                        paste('image', input3,'.jpg', sep = '')))
+    list(src = filename,
+         alt = paste("Image number", "Hier User Input"))
+    
+  },deleteFile = FALSE)
+  
+  
+  
   
   output$text4 <- renderText({
     "Der folgende Graph zeigt die Entwicklung der täglich neu infizierten an Covid-19, wenn sich alle anderen wie Sie verhalten würden in Bezug auf die Maßnahmen."
