@@ -10,6 +10,8 @@ library(shiny)
 library (dplyr)
 library (ggplot2)
 library(shinyWidgets)
+library(bslib)
+#thematic::thematic_shiny(font = "auto")
 #library(gapminder)
 library(rsconnect)
 
@@ -23,13 +25,15 @@ rsconnect::showLogs()
 
 # Define UI for application that draws a histogram
 ui <- shinyUI(fluidPage(
+  theme = bs_theme(version = 4, bootswatch = "superhero"),
+ # theme = bs_theme(),
   chooseSliderSkin(skin = "Modern", color = "DodgerBlue"),
   
   titlePanel(div(
-    HTML("<b style=\"color:DodgerBlue;\">Covid19-Simulation</b>")
+    HTML("<b style=\"color:DodgerBlue;\">Covid-19 Simulation</b>")
   )),
   fluidRow(
-    column(12,"Mit diesem Dashboard können Sie die Wahrscheinlichkeit berechnen, sich in einem Raum durch Aerosole and Covid-19 anzustecken."),
+    column(12,"Mit diesem Dashboard können Sie die Wahrscheinlichkeit berechnen, sich in einem Raum durch Aerosole an Covid-19 anzustecken."),
     column(12, div(HTML("<h3><b> Ihr Raumsetting:</b></h3>")))
   ),
   
@@ -116,6 +120,7 @@ ui <- shinyUI(fluidPage(
 
 
 server <- function(input, output, session) {
+  #bs_themer()
   output$text3 <- renderText({
     #LIST OF VARIABLES NECESSARY FOR CALCULATIONS BASED ON LELIEVELD (2020)
     
@@ -323,12 +328,12 @@ server <- function(input, output, session) {
     
     paste(
       "<strong style=\"font-size:22px;\">",
-      "<font style=\"color:DarkRed;\">",
+      "<font style=\"color:DodgerBlue;\">",
       format(infect_risk_individual, digits = 3),
       "%",
       "</font>",
       "Wahrscheinlichkeit, dass Sie sich selbst mit Covid-19 infizieren und ",
-      "<font style=\"color:DarkRed;\">",
+      "<font style=\"color:DodgerBlue;\">",
       format(risk_of_1_person_in_room_being_infected, digits = 3),
       "%",
       "</font>",
@@ -550,8 +555,8 @@ server <- function(input, output, session) {
     #Copy von erster Funktion noch einfügen
     paste(
       "<strong style=\"font-size:22px;\">",
-      "Die Anzahl der Personen, die sich im Durchschnitt in Ihrem Raum mit Covid-19 infizieren beträgt:",
-      "<font style=\"color:DarkRed;\">",
+      "Die Anzahl der Personen, die sich im Durchschnitt in Ihrem Raum mit Covid-19 infizieren, beträgt:",
+      "<font style=\"color:DodgerBlue;\">",
       #Hier war vorher individuelle Risk aus risk_of_1_person_in_room_being_infected mit digits = 3
       format(people_infected, digits = 1),
       
@@ -822,19 +827,21 @@ server <- function(input, output, session) {
     ################### Alternative mit GGPLOT
     data <- as.data.frame(append_vector_worst)
     main <- "Worst Case Data"
-    ggplot(data, aes(x = 1:7, append_vector_worst)) + geom_line(color = "DarkRed")
+    ggplot(data, aes(x = 1:7, append_vector_worst)) + geom_line(color = "DodgerBlue")
     
     
     
     #Graph der zahlen in Blau mit punkten
     plot(
       append_vector_worst,
-      ylim = c(0, 30),
+      ylim = c(0, 120),
       type = "l",
-      col = "DarkRed",
+      col = "Red",
       axes = TRUE,
       ann = FALSE
     )
+    
+    
     
     box()
     
@@ -844,7 +851,7 @@ server <- function(input, output, session) {
       type = "l",
       pch = 22,
       lty = ,
-      col = "DarkBlue"
+      col = "DodgerBlue"
     )
     lines(
       append_vector_best,
@@ -858,10 +865,10 @@ server <- function(input, output, session) {
     
     #Titel mit roter fetter schrift
     title(main = "Pandemieentwicklung in Deutschland",
-          col.main = "DarkRed",
+          col.main = "DodgerBlue",
           font.main = 4)
     
-    title(ylab = "Kumulierte Fallzahlen in Deutschland in Tausend", col.lab = rgb(0, 0.5, 0))
+    title(ylab = "Kumulierte Fallzahlen in Deutschland in Zehntausend", col.lab = rgb(0, 0.5, 0))
     title(xlab = "Tägliche Infizierte in den nächsten 7 Tagen", col.lab = rgb(0, 0.5, 0))
     
     
