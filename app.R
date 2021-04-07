@@ -19,7 +19,7 @@ library(png)
 library(grid)
 
 if (FALSE) {
-rsconnect::setAccountInfo(name='fau-erl-nue', token='C4C6D39B6531E5AE28F944B0A52708F6', secret='FQ3hc7iXUqgrlruHsMOApt4AMc7npUFsgVX2qtl8')
+rsconnect::setAccountInfo(name='fau-erl-nue', token='C4C6D39B6531E5AE28F944B0A52708F6', secret='SECRET')
 
 rsconnect::deployApp(getwd())
 
