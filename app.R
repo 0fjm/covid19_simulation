@@ -14,9 +14,12 @@ library(bslib)
 #thematic::thematic_shiny(font = "auto")
 #library(gapminder)
 library(rsconnect)
+library(gridExtra)
+library(png)
+library(grid)
 
 if (FALSE) {
-rsconnect::setAccountInfo(name='fau-erl-nue', token='C4C6D39B6531E5AE28F944B0A52708F6', secret='Secret')
+rsconnect::setAccountInfo(name='fau-erl-nue', token='C4C6D39B6531E5AE28F944B0A52708F6', secret='FQ3hc7iXUqgrlruHsMOApt4AMc7npUFsgVX2qtl8')
 
 rsconnect::deployApp(getwd())
 
@@ -105,12 +108,14 @@ ui <- shinyUI(fluidPage(
     ),
     
     mainPanel(
+      
       htmlOutput("text3"),
       htmlOutput("text1"),
-      #imageOutput("imtage"),
+      
       #htmlOutput("text5"),
       #htmlOutput("text4"),
-      plotOutput("text2")
+      plotOutput("text2"),
+      imageOutput("image")
     ),
     
     
@@ -121,6 +126,10 @@ ui <- shinyUI(fluidPage(
 
 server <- function(input, output, session) {
   #bs_themer()
+  
+  
+  
+  
   output$text3 <- renderText({
     #LIST OF VARIABLES NECESSARY FOR CALCULATIONS BASED ON LELIEVELD (2020)
     
@@ -134,10 +143,10 @@ server <- function(input, output, session) {
     emission_breathing <- 0.06
     
     #emission speaking [/cm³]
-    emission_speaking <- 0.6
+    emission_speaking <- 0.8
     
     #speaking / breathing ratio
-    speaking_breathing_rat <- 0.1
+    speaking_breathing_rat <- 0.2
     
     #respiratory rate [l/min]
     resp_rate <- 10
@@ -361,7 +370,7 @@ server <- function(input, output, session) {
     emission_breathing <- 0.06
     
     #emission speaking [/cm³]
-    emission_speaking <- 0.6
+    emission_speaking <- 0.8
     
     #speaking / breathing ratio
     speaking_breathing_rat <- 0.1
@@ -571,6 +580,40 @@ server <- function(input, output, session) {
     
   })
   
+
+  
+  
+  output$image <- renderImage({
+    
+    #browser()
+    input3 <- 'man_col_w'
+    
+    input2 <- 'man_col_r'
+    #outfile <- tempfile(fileext = '.png')
+    
+    
+    
+    filename <- normalizePath(file.path('./images',
+                                        paste(input3,'.png', sep = '')))
+    filename2 <- normalizePath(file.path('./images',
+                                        paste(input2,'.png', sep = '')))
+    
+    inputs <- ""
+    
+    for (i in 1:5) {
+      
+      paste(inputs,input3, sep = '')
+    }
+    
+    
+    list(src = filename,
+         alt = paste(input3, "Hier User Input"))
+    
+   
+    
+  },deleteFile = FALSE)
+  
+  
   
   
   output$text2 <- renderPlot({
@@ -587,7 +630,7 @@ server <- function(input, output, session) {
     emission_breathing <- 0.06
     
     #emission speaking [/cm³]
-    emission_speaking <- 0.6
+    emission_speaking <- 0.8
     
     #speaking / breathing ratio
     speaking_breathing_rat <- 0.1
@@ -880,15 +923,7 @@ server <- function(input, output, session) {
   })
   
 
-  output$image <- renderImage({
-    
-    input3 = '3'
-    filename <- normalizePath(file.path('./images',
-                                        paste('image', input3,'.jpg', sep = '')))
-    list(src = filename,
-         alt = paste("Image number", "Hier User Input"))
-    
-  },deleteFile = FALSE)
+  
   
   
   
