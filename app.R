@@ -16,7 +16,7 @@ library(bslib)
 library(rsconnect)
 
 if (FALSE) {
-rsconnect::setAccountInfo(name='fau-erl-nue', token='C4C6D39B6531E5AE28F944B0A52708F6', secret='FQ3hc7iXUqgrlruHsMOApt4AMc7npUFsgVX2qtl8')
+rsconnect::setAccountInfo(name='fau-erl-nue', token='C4C6D39B6531E5AE28F944B0A52708F6', secret='Secret')
 
 rsconnect::deployApp(getwd())
 
@@ -84,7 +84,7 @@ ui <- shinyUI(fluidPage(
         "Wie lange tragen die Personen die Masken?",
         c(
           "Nie" = "NieMask",
-          "Gelegentlich" = "GelMask",
+         # "Gelegentlich" = "GelMask",
           "Die Hälfte der Zeit" = "HalfMask",
           "Dauerhaft" = "ImmerMask"
         )
@@ -97,8 +97,8 @@ ui <- shinyUI(fluidPage(
           #Werte müssen noch angepasst werden
           "Nie" = "NoAir",
           "Fenster dauerhaft gekippt" = "FensterGekippt",
-          "Regelmäßiges Stoßlüften (10min/h)" = "Stoßlueften",
-          "Lüftungssystem" = "Lueftungssystem"
+          "Regelmäßiges Stoßlüften (10min/h)" = "Stoßlueften"
+          #"Lüftungssystem" = "Lueftungssystem"
         )
       )
       
@@ -241,9 +241,9 @@ server <- function(input, output, session) {
       room_vent_rate <- 0.35
     } else if (input$air == "Stoßlueften") {
       room_vent_rate <- 2
-    } else if (input$air == "Lueftungssystem") {
-      room_vent_rate <- 9
-    }
+    } #else if (input$air == "Lueftungssystem") {
+      #room_vent_rate <- 9
+    #}
     
     
     #total mask efficiency (exhaling + inhaling)
@@ -468,9 +468,9 @@ server <- function(input, output, session) {
       room_vent_rate <- 0.35
     } else if (input$air == "Stoßlueften") {
       room_vent_rate <- 2
-    } else if (input$air == "Lueftungssystem") {
-      room_vent_rate <- 9
-    }
+    } #else if (input$air == "Lueftungssystem") {
+      #room_vent_rate <- 9
+    #}
     
     
     #total mask efficiency (exhaling + inhaling)
@@ -694,9 +694,9 @@ server <- function(input, output, session) {
       room_vent_rate <- 0.35
     } else if (input$air == "Stoßlueften") {
       room_vent_rate <- 2
-    } else if (input$air == "Lueftungssystem") {
-      room_vent_rate <- 9
-    }
+    } #else if (input$air == "Lueftungssystem") {
+      #room_vent_rate <- 9
+    #}
     
     
     #total mask efficiency (exhaling + inhaling)
