@@ -65,8 +65,7 @@ ui <- shinyUI(fluidPage(
         "distance",
         "Wie viel Meter Abstand halten die Personen zueinander?",
         c(
-          "Weniger als 1m" = "k1m",
-          "Zwischen 1m und 1,5m" = "z1u15",
+          "Weniger als 1,5m" = "k1m",
           "Mehr als 1,5m" = "m1m"
         )
       ),
@@ -76,22 +75,13 @@ ui <- shinyUI(fluidPage(
         "Welche Masken tragen die Personen im Raum?",
         c(
           "Keine" = "No",
-          "Alltagsmasken" = "AT",
+        #  "Alltagsmasken" = "AT",
           "OP Masken" = "OP",
           "FFP2 Masken" = "FFP2"
         )
       ),
       
-      selectInput(
-        "masks_dur",
-        "Wie lange tragen die Personen die Masken?",
-        c(
-          "Nie" = "NieMask",
-         # "Gelegentlich" = "GelMask",
-          "Die Hälfte der Zeit" = "HalfMask",
-          "Dauerhaft" = "ImmerMask"
-        )
-      ),
+     
       
       selectInput(
         "air",
@@ -114,7 +104,7 @@ ui <- shinyUI(fluidPage(
       
       #htmlOutput("text5"),
       #htmlOutput("text4"),
-      plotOutput("text2"),
+      #plotOutput("text2"),
       imageOutput("image")
     ),
     
@@ -261,24 +251,14 @@ server <- function(input, output, session) {
     
     if (input$masks == "No") {
       total_mask_effic <- 0
-    } else if (input$masks == "AT") {
-      total_mask_effic <- 0.35 #ACHTUNG Wert erfunden! Hier ggf. nachsehen
+ 
     } else if (input$masks == "OP") {
       total_mask_effic <- 0.7
     } else if (input$masks == "FFP2") {
       total_mask_effic <- 0.95
     }
     
-    #Das macht aus meiner Sicht keinen Sinn aber funktioniert lustiger weise (quasi falsch herum?)
-    if (input$masks_dur == "NieMask") {
-      total_mask_effic <- total_mask_effic * 0
-    } else if (input$masks_dur == "GelMask") {
-      total_mask_effic <- total_mask_effic * 0.3
-    } else if (input$masks_dur == "HalfMask") {
-      total_mask_effic <- total_mask_effic * 0.6
-    } else if (input$masks_dur == "ImmerMask") {
-      total_mask_effic <- total_mask_effic * 1
-    }
+
     
     # susceptible # persons / room
     
@@ -303,7 +283,7 @@ server <- function(input, output, session) {
     risk_of_1_person_in_room_being_infected <- bar * 100
     
     
-    
+    if (FALSE) { #'Alter Stand nur für Referenz'
     if (input$distance == "k1m") {
       infect_risk_individual <- infect_risk_individual
     } else if (input$distance == "z1u15") {
@@ -311,7 +291,15 @@ server <- function(input, output, session) {
     } else if (input$distance == "m1m") {
       infect_risk_individual <- infect_risk_individual * 0.85
     }
+    }
     
+    if (input$distance == "k1m") {
+      infect_risk_individual <- infect_risk_individual
+     
+    } else if (input$distance == "m1m") {
+      infect_risk_individual <- infect_risk_individual * 0.85
+     
+    }
     
     
     
@@ -488,24 +476,14 @@ server <- function(input, output, session) {
     
     if (input$masks == "No") {
       total_mask_effic <- 0
-    } else if (input$masks == "AT") {
-      total_mask_effic <- 0.35 #ACHTUNG Wert erfunden! Hier ggf. nachsehen
+
     } else if (input$masks == "OP") {
       total_mask_effic <- 0.7
     } else if (input$masks == "FFP2") {
       total_mask_effic <- 0.95
     }
     
-    #Das macht aus meiner Sicht keinen Sinn aber funktioniert lustiger weise (quasi falsch herum?)
-    if (input$masks_dur == "NieMask") {
-      total_mask_effic <- total_mask_effic * 0
-    } else if (input$masks_dur == "GelMask") {
-      total_mask_effic <- total_mask_effic * 0.3
-    } else if (input$masks_dur == "HalfMask") {
-      total_mask_effic <- total_mask_effic * 0.6
-    } else if (input$masks_dur == "ImmerMask") {
-      total_mask_effic <- total_mask_effic * 1
-    }
+
     
     # susceptible # persons / room
     
@@ -533,8 +511,6 @@ server <- function(input, output, session) {
     
     if (input$distance == "k1m") {
       infect_risk_individual <- infect_risk_individual
-    } else if (input$distance == "z1u15") {
-      infect_risk_individual <- infect_risk_individual * 0.95
     } else if (input$distance == "m1m") {
       infect_risk_individual <- infect_risk_individual * 0.85
     }
@@ -748,24 +724,14 @@ server <- function(input, output, session) {
     
     if (input$masks == "No") {
       total_mask_effic <- 0
-    } else if (input$masks == "AT") {
-      total_mask_effic <- 0.35 #ACHTUNG Wert erfunden! Hier ggf. nachsehen
+
     } else if (input$masks == "OP") {
       total_mask_effic <- 0.7
     } else if (input$masks == "FFP2") {
       total_mask_effic <- 0.95
     }
     
-    #Das macht aus meiner Sicht keinen Sinn aber funktioniert lustiger weise (quasi falsch herum?)
-    if (input$masks_dur == "NieMask") {
-      total_mask_effic <- total_mask_effic * 0
-    } else if (input$masks_dur == "GelMask") {
-      total_mask_effic <- total_mask_effic * 0.3
-    } else if (input$masks_dur == "HalfMask") {
-      total_mask_effic <- total_mask_effic * 0.6
-    } else if (input$masks_dur == "ImmerMask") {
-      total_mask_effic <- total_mask_effic * 1
-    }
+
     
     # susceptible # persons / room
     
@@ -793,8 +759,6 @@ server <- function(input, output, session) {
     
     if (input$distance == "k1m") {
       infect_risk_individual <- infect_risk_individual
-    } else if (input$distance == "z1u15") {
-      infect_risk_individual <- infect_risk_individual * 0.95
     } else if (input$distance == "m1m") {
       infect_risk_individual <- infect_risk_individual * 0.85
     }
