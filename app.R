@@ -18,101 +18,112 @@ library(gridExtra)
 library(png)
 library(grid)
 
+library(shinyjs)
+library(shinydashboard)
+
+
+
+
 if (FALSE) {
-rsconnect::setAccountInfo(name='fau-erl-nue', token='C4C6D39B6531E5AE28F944B0A52708F6', secret='SECRET')
-
-rsconnect::deployApp(getwd())
-
-rsconnect::showLogs()
+  rsconnect::setAccountInfo(name = 'fau-erl-nue',
+                            token = 'C4C6D39B6531E5AE28F944B0A52708F6',
+                            secret = 'SECRET')
+  
+  rsconnect::deployApp(getwd())
+  
+  rsconnect::showLogs()
 }
 
-# Define UI for application that draws a histogram
-ui <- shinyUI(fluidPage(
-  theme = bs_theme(version = 4, bootswatch = "superhero"),
- # theme = bs_theme(),
-  chooseSliderSkin(skin = "Modern", color = "DodgerBlue"),
-  
-  titlePanel(div(
-    HTML("<b style=\"color:DodgerBlue;\">Covid-19 Simulation</b>")
-  )),
-  fluidRow(
-    column(12,"Mit diesem Dashboard können Sie die Wahrscheinlichkeit berechnen, sich in einem Raum durch Aerosole an Covid-19 anzustecken."),
-    column(12, div(HTML("<h3><b> Ihr Raumsetting:</b></h3>")))
-  ),
-  
-  fluidRow(
-  column(4, sliderInput("people",
-                        "Personen im Raum:",
-                        2, 15, 8)) ,
-  
-  column(4, sliderInput("raum",
-              "Raumgröße (in m²):",
-              10, 35, 25)),
-  column(4,sliderInput("zeit",
-              "Aufenthaltsdauer (in Std.):",
-              1, 16, 8)),
-  
-  ),
-  (div(
-    HTML("<h3><b>Maßnahmen gegen Covid-19:</b></h3>")
-  )),
-  sidebarLayout(
-    position = "left",
-    sidebarPanel(
-     
-      
-      selectInput(
-        "distance",
-        "Wie viel Meter Abstand halten die Personen zueinander?",
-        c(
-          "Weniger als 1,5m" = "k1m",
-          "Mehr als 1,5m" = "m1m"
-        )
-      ),
-      
-      selectInput(
-        "masks",
-        "Welche Masken tragen die Personen im Raum?",
-        c(
-          "Keine" = "No",
-        #  "Alltagsmasken" = "AT",
-          "OP Masken" = "OP",
-          "FFP2 Masken" = "FFP2"
-        )
-      ),
-      
-     
-      
-      selectInput(
-        "air",
-        "Wie oft wird der Raum gelüftet?",
-        c(
-          #Werte müssen noch angepasst werden
-          "Nie" = "NoAir",
-          "Fenster dauerhaft gekippt" = "FensterGekippt",
-          "Regelmäßiges Stoßlüften (10min/h)" = "Stoßlueften"
-          #"Lüftungssystem" = "Lueftungssystem"
-        )
-      )
-      
-    ),
-    
-    mainPanel(
-      
-      htmlOutput("text3"),
-      htmlOutput("text1"),
-      
-      #htmlOutput("text5"),
-      #htmlOutput("text4"),
-      #plotOutput("text2"),
-      imageOutput("image")
-    ),
-    
-    
-  )
-  
-))
 
+if (interactive()) {
+# Define UI for application that draws a histogram
+  # Define UI for application that draws a histogram
+  ui <- shinyUI(fluidPage(
+    theme = bs_theme(version = 4, bootswatch = "journal"),
+    # theme = bs_theme(),
+    chooseSliderSkin(skin = "Modern", color = "DodgerBlue"),
+    
+    titlePanel(div(
+      HTML("<b style=\"color:DodgerBlue;\">Covid-19 Simulation</b>")
+    )),
+    fluidRow(
+      column(12,"Mit diesem Dashboard können Sie die Wahrscheinlichkeit berechnen, sich in einem Raum durch Aerosole an Covid-19 anzustecken."),
+      column(12, div(HTML("<h3><b> Ihr Raumsetting:</b></h3>")))
+    ),
+    
+    fluidRow(
+      column(4, sliderInput("people",
+                            "Personen im Raum:",
+                            2, 15, 8)) ,
+      
+      column(4, sliderInput("raum",
+                            "Raumgröße (in m²):",
+                            10, 35, 25)),
+      column(4,sliderInput("zeit",
+                           "Aufenthaltsdauer (in Std.):",
+                           1, 16, 8)),
+      
+    ),
+    (div(
+      HTML("<h3><b>Maßnahmen gegen Covid-19:</b></h3>")
+    )),
+    sidebarLayout(
+      position = "left",
+      sidebarPanel(
+        
+        
+        selectInput(
+          "distance",
+          "Wie viel Meter Abstand halten die Personen zueinander?",
+          c(
+            "Weniger als 1,5m" = "k1m",
+            "Mehr als 1,5m" = "m1m"
+          )
+        ),
+        
+        selectInput(
+          "masks",
+          "Welche Masken tragen die Personen im Raum?",
+          c(
+            "Keine" = "No",
+            #  "Alltagsmasken" = "AT",
+            "OP Masken" = "OP",
+            "FFP2 Masken" = "FFP2"
+          )
+        ),
+        
+        
+        
+        selectInput(
+          "air",
+          "Wie oft wird der Raum gelüftet?",
+          c(
+            #Werte müssen noch angepasst werden
+            "Nie" = "NoAir",
+            "Fenster dauerhaft gekippt" = "FensterGekippt",
+            "Regelmäßiges Stoßlüften (10min/h)" = "Stoßlueften"
+            #"Lüftungssystem" = "Lueftungssystem"
+          )
+        )
+        
+      ),
+      
+      mainPanel(
+        
+        htmlOutput("text3"),
+        htmlOutput("text1"),
+        
+        #htmlOutput("text5"),
+        #htmlOutput("text4"),
+        #plotOutput("text2"),
+        imageOutput("image")
+      ),
+      
+      
+    )
+    
+  ))
+  
 
 server <- function(input, output, session) {
   #bs_themer()
@@ -214,7 +225,7 @@ server <- function(input, output, session) {
     
     #RNA cont. aerosol conc [/l]
     
-  
+    
     
     
     var_RNA_cont_aero_conc <-
@@ -241,7 +252,7 @@ server <- function(input, output, session) {
     } else if (input$air == "Stoßlueften") {
       room_vent_rate <- 2
     } #else if (input$air == "Lueftungssystem") {
-      #room_vent_rate <- 9
+    #room_vent_rate <- 9
     #}
     
     
@@ -251,14 +262,14 @@ server <- function(input, output, session) {
     
     if (input$masks == "No") {
       total_mask_effic <- 0
- 
+      
     } else if (input$masks == "OP") {
       total_mask_effic <- 0.7
     } else if (input$masks == "FFP2") {
       total_mask_effic <- 0.95
     }
     
-
+    
     
     # susceptible # persons / room
     
@@ -283,22 +294,23 @@ server <- function(input, output, session) {
     risk_of_1_person_in_room_being_infected <- bar * 100
     
     
-    if (FALSE) { #'Alter Stand nur für Referenz'
-    if (input$distance == "k1m") {
-      infect_risk_individual <- infect_risk_individual
-    } else if (input$distance == "z1u15") {
-      infect_risk_individual <- infect_risk_individual * 0.95
-    } else if (input$distance == "m1m") {
-      infect_risk_individual <- infect_risk_individual * 0.85
-    }
+    if (FALSE) {
+      #'Alter Stand nur für Referenz'
+      if (input$distance == "k1m") {
+        infect_risk_individual <- infect_risk_individual
+      } else if (input$distance == "z1u15") {
+        infect_risk_individual <- infect_risk_individual * 0.95
+      } else if (input$distance == "m1m") {
+        infect_risk_individual <- infect_risk_individual * 0.85
+      }
     }
     
     if (input$distance == "k1m") {
       infect_risk_individual <- infect_risk_individual
-     
+      
     } else if (input$distance == "m1m") {
       infect_risk_individual <- infect_risk_individual * 0.85
-     
+      
     }
     
     
@@ -466,7 +478,7 @@ server <- function(input, output, session) {
     } else if (input$air == "Stoßlueften") {
       room_vent_rate <- 2
     } #else if (input$air == "Lueftungssystem") {
-      #room_vent_rate <- 9
+    #room_vent_rate <- 9
     #}
     
     
@@ -476,14 +488,14 @@ server <- function(input, output, session) {
     
     if (input$masks == "No") {
       total_mask_effic <- 0
-
+      
     } else if (input$masks == "OP") {
       total_mask_effic <- 0.7
     } else if (input$masks == "FFP2") {
       total_mask_effic <- 0.95
     }
     
-
+    
     
     # susceptible # persons / room
     
@@ -556,11 +568,10 @@ server <- function(input, output, session) {
     
   })
   
-
+  
   
   
   output$image <- renderImage({
-    
     #browser()
     input3 <- 'man_col_w'
     
@@ -570,24 +581,23 @@ server <- function(input, output, session) {
     
     
     filename <- normalizePath(file.path('./images',
-                                        paste(input3,'.png', sep = '')))
+                                        paste(input3, '.png', sep = '')))
     filename2 <- normalizePath(file.path('./images',
-                                        paste(input2,'.png', sep = '')))
+                                         paste(input2, '.png', sep = '')))
     
     inputs <- ""
     
     for (i in 1:5) {
-      
-      paste(inputs,input3, sep = '')
+      paste(inputs, input3, sep = '')
     }
     
     
     list(src = filename,
          alt = paste(input3, "Hier User Input"))
     
-   
     
-  },deleteFile = FALSE)
+    
+  }, deleteFile = FALSE)
   
   
   
@@ -714,7 +724,7 @@ server <- function(input, output, session) {
     } else if (input$air == "Stoßlueften") {
       room_vent_rate <- 2
     } #else if (input$air == "Lueftungssystem") {
-      #room_vent_rate <- 9
+    #room_vent_rate <- 9
     #}
     
     
@@ -724,14 +734,14 @@ server <- function(input, output, session) {
     
     if (input$masks == "No") {
       total_mask_effic <- 0
-
+      
     } else if (input$masks == "OP") {
       total_mask_effic <- 0.7
     } else if (input$masks == "FFP2") {
       total_mask_effic <- 0.95
     }
     
-
+    
     
     # susceptible # persons / room
     
@@ -886,7 +896,7 @@ server <- function(input, output, session) {
     
   })
   
-
+  
   
   
   
@@ -896,9 +906,11 @@ server <- function(input, output, session) {
     "Der folgende Graph zeigt die Entwicklung der täglich neu infizierten an Covid-19, wenn sich alle anderen wie Sie verhalten würden in Bezug auf die Maßnahmen."
   })
   
-
+  
   
 }
 
 # Run the application
 shinyApp(ui = ui, server = server)
+
+}
