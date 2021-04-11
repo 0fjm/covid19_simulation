@@ -19,7 +19,7 @@ library(png)
 library(grid)
 
 #library(shinyjs)
-#library(shinydashboard)
+library(shinydashboard)
 
 
 #Before running, setwd() to current source file directory
@@ -43,14 +43,14 @@ if (FALSE) {
     chooseSliderSkin(skin = "Modern", color = "DodgerBlue"),
     
     titlePanel(div(
-      HTML("<b style=\"color:DodgerBlue;\">Covid-19 Simulation</b>")
+      HTML("<b style=\"color:DodgerBlue;\">COVID-19 Simulation</b>")
     )),
     fluidRow(
       #column(12,"Mit diesem Dashboard können Sie die Wahrscheinlichkeit berechnen, sich in einem Raum durch Aerosole an Covid-19 anzustecken."),
       column(12, div(HTML("<h3><b> Ihr Raumsetting:</b></h3>")))
     ),
     
-    navbarPage("Noch nicht verbunden:", id = "inTabset",
+    tabsetPanel(id = "inTabset", selected = NULL,
                tabPanel("Großraumbüro",
                         fluidRow(
                           column(4, sliderInput("people",
@@ -71,10 +71,10 @@ if (FALSE) {
                                                 "Personen im Raum:",
                                                 2, 15, 15)) ,
                           
-                          column(4, sliderInput("raum",
+                          column(4, sliderInput("raum2",
                                                 "Raumgröße (in m²):",
                                                 10, 35, 23)),
-                          column(4,sliderInput("zeit",
+                          column(4,sliderInput("zeit2",
                                                "Aufenthaltsdauer (in Std.):",
                                                1, 16, 6)),
                           
@@ -85,10 +85,10 @@ if (FALSE) {
                                                 "Personen im Raum:",
                                                 2, 15, 4)) ,
                           
-                          column(4, sliderInput("raum",
+                          column(4, sliderInput("raum3",
                                                 "Raumgröße (in m²):",
                                                 10, 35, 10)),
-                          column(4,sliderInput("zeit",
+                          column(4,sliderInput("zeit3",
                                                "Aufenthaltsdauer (in Std.):",
                                                1, 16, 4)),
                           
@@ -145,11 +145,11 @@ if (FALSE) {
       ),
       
       mainPanel(
-        
+        #htmlOutput("text10"),
         htmlOutput("text3"),
         htmlOutput("text6"),
         htmlOutput("text1"),
-        htmlOutput("text10"),
+        
         #htmlOutput("text5"),
         #htmlOutput("text4"),
         #plotOutput("text2"),
@@ -168,16 +168,15 @@ server <- function(input, output, session) {
   output$text10 <- renderText({
     #browser()
     
-    observe(
-      if 
-    num_people <- input$people,
+    if (input$inTabset == "Zug") {
+      num_people <- input$people3
+    } else if (input$inTabset == "Bar") {
+      num_people <- input$people2
+    } else if (input$inTabset == "Großraumbüro") {
+      num_people <- input$people
+    }
     
-    num_people <- input$people2,
-    
-    num_people <- input$people3
-    )
-    
-    paste(c(num_people))
+    paste(num_people)
   })
   
   #eventReactive()
@@ -209,7 +208,17 @@ server <- function(input, output, session) {
     mean_aer_dia <- 5
     
     #infectious episode [d] *
-    inf_epis <- 0.16666666667 * input$zeit
+    
+    if (input$inTabset == "Zug") {
+      zeit <- input$zeit3
+    } else if (input$inTabset == "Bar") {
+      zeit <- input$zeit2
+    } else if (input$inTabset == "Großraumbüro") {
+      zeit <- input$zeit
+    }
+    
+    
+    inf_epis <- 0.16666666667 * zeit
     
     #virus lifetime in aerosol [h]
     vir_life <- 1.7
@@ -218,30 +227,21 @@ server <- function(input, output, session) {
     #Das hier ändern in
     #https://www.sciencedirect.com/science/article/abs/pii/S2210670720306119
     #Wenn Distance 1.5m, dann finaler Wert * 0.8, z1u15 dann * 0.9, wenn k1m dann nix
-    
-    observeEvent (input$inTabset ,{
-      
-      
-      if(input$inTabset == "Großraumbüro") {
-        num_people <- input$people
-      } else if (input$inTabset == "Bar") {
-        num_people <- input$people2
-      } else if (input$inTabset == "Zug") {
-        num_people <- input$people3
-      }
-      
-    })
-    
-    
-    num_people <- input$people
-    
-    num_people2 <- input$people2
-    
-    num_people3 <- input$people3
-    
+
+ 
+    #observe(print(numpeople()))
     
     #Room Area in m square based on num people
     room_area <- input$raum
+    
+    if (input$inTabset == "Zug") {
+      room_area <- input$raum3
+    } else if (input$inTabset == "Bar") {
+      room_area <- input$raum2
+    } else if (input$inTabset == "Großraumbüro") {
+      room_area <- input$raum
+    }
+    
     
     #room height [m]** ** Very large room sizes violate the assumption of instantaneaous mixing of the air
     room_height <- 2.4
@@ -357,6 +357,18 @@ server <- function(input, output, session) {
     
     #risk of 1  person in room being infected [% / episode]
     
+    
+    if (input$inTabset == "Zug") {
+      num_people <- input$people3
+    } else if (input$inTabset == "Bar") {
+      num_people <- input$people2
+    } else if (input$inTabset == "Großraumbüro") {
+      num_people <- input$people
+    }
+    
+    
+
+    
     foo <- dosis_infectious_episode * num_people
     bar <- 1 - (1 - var_infect_prob) ^ foo
     
@@ -371,11 +383,11 @@ server <- function(input, output, session) {
     }
     
     
-    
-    
     people_infected <-
-      input$people * (infect_risk_individual / 100)
+      num_people * (infect_risk_individual / 100)
     
+    
+  
     if (people_infected < 0.5) {
       people_infected <- "Keine"
     } else if (people_infected >= 0.5 && people_infected < 1.5) {
@@ -428,7 +440,7 @@ server <- function(input, output, session) {
     emission_speaking <- 0.8
     
     #speaking / breathing ratio
-    speaking_breathing_rat <- 0.2
+    speaking_breathing_rat <- 0.1
     
     #respiratory rate [l/min]
     resp_rate <- 10
@@ -440,36 +452,40 @@ server <- function(input, output, session) {
     mean_aer_dia <- 5
     
     #infectious episode [d] *
-    inf_epis <- 0.16666666667 * input$zeit
+    
+    if (input$inTabset == "Zug") {
+      zeit <- input$zeit3
+    } else if (input$inTabset == "Bar") {
+      zeit <- input$zeit2
+    } else if (input$inTabset == "Großraumbüro") {
+      zeit <- input$zeit
+    }
+    
+    
+    inf_epis <- 0.16666666667 * zeit
     
     #virus lifetime in aerosol [h]
     vir_life <- 1.7
-    
+    #browser()
     
     #Das hier ändern in
     #https://www.sciencedirect.com/science/article/abs/pii/S2210670720306119
     #Wenn Distance 1.5m, dann finaler Wert * 0.8, z1u15 dann * 0.9, wenn k1m dann nix
     
-    #browser()
- 
-    observeEvent (input$inTabset ,{
-      
-      
-      if(input$inTabset == "Großraumbüro") {
-        num_people <- input$people
-      } else if (input$inTabset == "Bar") {
-        num_people <- input$people2
-      } else if (input$inTabset == "Zug") {
-        num_people <- input$people3
-      }
-      
-    })
     
-  
+    #observe(print(numpeople()))
     
-
     #Room Area in m square based on num people
     room_area <- input$raum
+    
+    if (input$inTabset == "Zug") {
+      room_area <- input$raum3
+    } else if (input$inTabset == "Bar") {
+      room_area <- input$raum2
+    } else if (input$inTabset == "Großraumbüro") {
+      room_area <- input$raum
+    }
+    
     
     #room height [m]** ** Very large room sizes violate the assumption of instantaneaous mixing of the air
     room_height <- 2.4
@@ -585,35 +601,36 @@ server <- function(input, output, session) {
     
     #risk of 1  person in room being infected [% / episode]
     
+    
+    if (input$inTabset == "Zug") {
+      num_people <- input$people3
+    } else if (input$inTabset == "Bar") {
+      num_people <- input$people2
+    } else if (input$inTabset == "Großraumbüro") {
+      num_people <- input$people
+    }
+    
+    
+    
+    
     foo <- dosis_infectious_episode * num_people
     bar <- 1 - (1 - var_infect_prob) ^ foo
     
     risk_of_1_person_in_room_being_infected <- bar * 100
     
     
-    if (FALSE) {
-      #'Alter Stand nur für Referenz'
-      if (input$distance == "k1m") {
-        infect_risk_individual <- infect_risk_individual
-      } else if (input$distance == "z1u15") {
-        infect_risk_individual <- infect_risk_individual * 0.95
-      } else if (input$distance == "m1m") {
-        infect_risk_individual <- infect_risk_individual * 0.85
-      }
-    }
     
     if (input$distance == "k1m") {
       infect_risk_individual <- infect_risk_individual
-      
     } else if (input$distance == "m1m") {
       infect_risk_individual <- infect_risk_individual * 0.85
-      
     }
     
     
-    
     people_infected <-
-      input$people * (infect_risk_individual / 100)
+      num_people * (infect_risk_individual / 100)
+    
+    
     
     if (people_infected < 0.5) {
       people_infected <- "Keine"
@@ -662,7 +679,7 @@ server <- function(input, output, session) {
     emission_speaking <- 0.8
     
     #speaking / breathing ratio
-    speaking_breathing_rat <- 0.2
+    speaking_breathing_rat <- 0.1
     
     #respiratory rate [l/min]
     resp_rate <- 10
@@ -674,27 +691,40 @@ server <- function(input, output, session) {
     mean_aer_dia <- 5
     
     #infectious episode [d] *
-    inf_epis <- 0.16666666667 * input$zeit
+    
+    if (input$inTabset == "Zug") {
+      zeit <- input$zeit3
+    } else if (input$inTabset == "Bar") {
+      zeit <- input$zeit2
+    } else if (input$inTabset == "Großraumbüro") {
+      zeit <- input$zeit
+    }
+    
+    
+    inf_epis <- 0.16666666667 * zeit
     
     #virus lifetime in aerosol [h]
     vir_life <- 1.7
-    
+    #browser()
     
     #Das hier ändern in
     #https://www.sciencedirect.com/science/article/abs/pii/S2210670720306119
     #Wenn Distance 1.5m, dann finaler Wert * 0.8, z1u15 dann * 0.9, wenn k1m dann nix
     
-    observe({
-      if(req(input$inTabset) == "Großraumbüro") {
-        num_people <- input$people
-      } else if (req(input$inTabset) == "Bar") {
-        num_people <- input$people2
-      } else if (req(input$inTabset) == "Zug") {
-        num_people <- input$people3
-      }
-    })
+    
+    #observe(print(numpeople()))
+    
     #Room Area in m square based on num people
     room_area <- input$raum
+    
+    if (input$inTabset == "Zug") {
+      room_area <- input$raum3
+    } else if (input$inTabset == "Bar") {
+      room_area <- input$raum2
+    } else if (input$inTabset == "Großraumbüro") {
+      room_area <- input$raum
+    }
+    
     
     #room height [m]** ** Very large room sizes violate the assumption of instantaneaous mixing of the air
     room_height <- 2.4
@@ -810,35 +840,36 @@ server <- function(input, output, session) {
     
     #risk of 1  person in room being infected [% / episode]
     
+    
+    if (input$inTabset == "Zug") {
+      num_people <- input$people3
+    } else if (input$inTabset == "Bar") {
+      num_people <- input$people2
+    } else if (input$inTabset == "Großraumbüro") {
+      num_people <- input$people
+    }
+    
+    
+    
+    
     foo <- dosis_infectious_episode * num_people
     bar <- 1 - (1 - var_infect_prob) ^ foo
     
     risk_of_1_person_in_room_being_infected <- bar * 100
     
     
-    if (FALSE) {
-      #'Alter Stand nur für Referenz'
-      if (input$distance == "k1m") {
-        infect_risk_individual <- infect_risk_individual
-      } else if (input$distance == "z1u15") {
-        infect_risk_individual <- infect_risk_individual * 0.95
-      } else if (input$distance == "m1m") {
-        infect_risk_individual <- infect_risk_individual * 0.85
-      }
-    }
     
     if (input$distance == "k1m") {
       infect_risk_individual <- infect_risk_individual
-      
     } else if (input$distance == "m1m") {
       infect_risk_individual <- infect_risk_individual * 0.85
-      
     }
     
     
-    
     people_infected <-
-      input$people * (infect_risk_individual / 100)
+      num_people * (infect_risk_individual / 100)
+    
+    
     
     if (people_infected < 0.5) {
       people_infected <- "Keine"
@@ -910,7 +941,6 @@ server <- function(input, output, session) {
   
   
   output$text2 <- renderPlot({
-    #Option for RENDERPLOT: https://shiny.rstudio.com/gallery/image-output.html
     #LIST OF VARIABLES NECESSARY FOR CALCULATIONS BASED ON LELIEVELD (2020)
     
     ##RNA for 50% infection probability (D50)
@@ -938,27 +968,40 @@ server <- function(input, output, session) {
     mean_aer_dia <- 5
     
     #infectious episode [d] *
-    inf_epis <- 0.16666666667 * input$zeit
+    
+    if (input$inTabset == "Zug") {
+      zeit <- input$zeit3
+    } else if (input$inTabset == "Bar") {
+      zeit <- input$zeit2
+    } else if (input$inTabset == "Großraumbüro") {
+      zeit <- input$zeit
+    }
+    
+    
+    inf_epis <- 0.16666666667 * zeit
     
     #virus lifetime in aerosol [h]
     vir_life <- 1.7
-    
+    #browser()
     
     #Das hier ändern in
     #https://www.sciencedirect.com/science/article/abs/pii/S2210670720306119
     #Wenn Distance 1.5m, dann finaler Wert * 0.8, z1u15 dann * 0.9, wenn k1m dann nix
     
-    eventReactive(input$people, {
-      num_people <- input$people
-    })
-    eventReactive(input$people2, {
-      num_people <- input$people2
-    })
-    eventReactive(input$people3, {
-      num_people <- input$people3
-    })
+    
+    #observe(print(numpeople()))
+    
     #Room Area in m square based on num people
     room_area <- input$raum
+    
+    if (input$inTabset == "Zug") {
+      room_area <- input$raum3
+    } else if (input$inTabset == "Bar") {
+      room_area <- input$raum2
+    } else if (input$inTabset == "Großraumbüro") {
+      room_area <- input$raum
+    }
+    
     
     #room height [m]** ** Very large room sizes violate the assumption of instantaneaous mixing of the air
     room_height <- 2.4
@@ -1074,6 +1117,18 @@ server <- function(input, output, session) {
     
     #risk of 1  person in room being infected [% / episode]
     
+    
+    if (input$inTabset == "Zug") {
+      num_people <- input$people3
+    } else if (input$inTabset == "Bar") {
+      num_people <- input$people2
+    } else if (input$inTabset == "Großraumbüro") {
+      num_people <- input$people
+    }
+    
+    
+    
+    
     foo <- dosis_infectious_episode * num_people
     bar <- 1 - (1 - var_infect_prob) ^ foo
     
@@ -1088,28 +1143,16 @@ server <- function(input, output, session) {
     }
     
     
-    
-    
     people_infected <-
-      input$people * (infect_risk_individual / 100)
+      num_people * (infect_risk_individual / 100)
+    
+    
     
     if (people_infected < 0.5) {
       people_infected <- "Keine"
     } else if (people_infected >= 0.5 && people_infected < 1.5) {
       (people_infected <- 1)
     }
-    
-    
-    
-    
-    #risk of 1  person in room being infected [% / episode]
-    
-    #foo <- dosis_infectious_episode * num_people
-    #bar <- 1 - (1 - var_infect_prob) ^ foo
-    
-    #risk_of_1_person_in_room_being_infected <- bar * 100
-    
-    ####Copy von erster Funktion noch einfügen
     
     
     
@@ -1212,13 +1255,7 @@ server <- function(input, output, session) {
   
   
   
-  
-  
-  
-  
-  output$text4 <- renderText({
-    "Der folgende Graph zeigt die Entwicklung der täglich neu infizierten an Covid-19, wenn sich alle anderen wie Sie verhalten würden in Bezug auf die Maßnahmen."
-  })
+
   
   
   
