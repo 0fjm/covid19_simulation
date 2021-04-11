@@ -55,39 +55,39 @@ if (FALSE) {
                         fluidRow(
                           column(4, sliderInput("people",
                                                 "Personen im Raum:",
-                                                2, 15, 8)) ,
+                                                2, 20, 3)) ,
                           
                           column(4, sliderInput("raum",
                                                 "Raumgröße (in m²):",
-                                                10, 35, 25)),
+                                                10, 40, 30)),
                           column(4,sliderInput("zeit",
                                                "Aufenthaltsdauer (in Std.):",
                                                1, 16, 8)),
                           
                         )),
-               tabPanel("Bar",
+               tabPanel("Geburtstagsfeier",
                         fluidRow(
                           column(4, sliderInput("people2",
                                                 "Personen im Raum:",
-                                                2, 15, 15)) ,
+                                                2, 20, 15)) ,
                           
                           column(4, sliderInput("raum2",
                                                 "Raumgröße (in m²):",
-                                                10, 35, 23)),
+                                                10, 40, 35)),
                           column(4,sliderInput("zeit2",
                                                "Aufenthaltsdauer (in Std.):",
                                                1, 16, 6)),
                           
                         )),
-               tabPanel("Zug",
+               tabPanel("Zugabteil",
                         fluidRow(
                           column(4, sliderInput("people3",
                                                 "Personen im Raum:",
-                                                2, 15, 4)) ,
+                                                2, 20, 8)) ,
                           
                           column(4, sliderInput("raum3",
                                                 "Raumgröße (in m²):",
-                                                10, 35, 10)),
+                                                10, 40, 10)),
                           column(4,sliderInput("zeit3",
                                                "Aufenthaltsdauer (in Std.):",
                                                1, 16, 4)),
@@ -153,7 +153,8 @@ if (FALSE) {
         #htmlOutput("text5"),
         #htmlOutput("text4"),
         #plotOutput("text2"),
-        imageOutput("image")
+        imageOutput("image"),
+        #plotOutput("images")
       ),
       
       
@@ -164,20 +165,6 @@ if (FALSE) {
 
 server <- function(input, output, session) {
   #bs_themer()
-  
-  output$text10 <- renderText({
-    #browser()
-    
-    if (input$inTabset == "Zug") {
-      num_people <- input$people3
-    } else if (input$inTabset == "Bar") {
-      num_people <- input$people2
-    } else if (input$inTabset == "Großraumbüro") {
-      num_people <- input$people
-    }
-    
-    paste(num_people)
-  })
   
   #eventReactive()
   output$text1 <- renderText({
@@ -209,9 +196,9 @@ server <- function(input, output, session) {
     
     #infectious episode [d] *
     
-    if (input$inTabset == "Zug") {
+    if (input$inTabset == "Zugabteil") {
       zeit <- input$zeit3
-    } else if (input$inTabset == "Bar") {
+    } else if (input$inTabset == "Geburtstagsfeier") {
       zeit <- input$zeit2
     } else if (input$inTabset == "Großraumbüro") {
       zeit <- input$zeit
@@ -234,9 +221,9 @@ server <- function(input, output, session) {
     #Room Area in m square based on num people
     room_area <- input$raum
     
-    if (input$inTabset == "Zug") {
+    if (input$inTabset == "Zugabteil") {
       room_area <- input$raum3
-    } else if (input$inTabset == "Bar") {
+    } else if (input$inTabset == "Geburtstagsfeier") {
       room_area <- input$raum2
     } else if (input$inTabset == "Großraumbüro") {
       room_area <- input$raum
@@ -358,9 +345,9 @@ server <- function(input, output, session) {
     #risk of 1  person in room being infected [% / episode]
     
     
-    if (input$inTabset == "Zug") {
+    if (input$inTabset == "Zugabteil") {
       num_people <- input$people3
-    } else if (input$inTabset == "Bar") {
+    } else if (input$inTabset == "Geburtstagsfeier") {
       num_people <- input$people2
     } else if (input$inTabset == "Großraumbüro") {
       num_people <- input$people
@@ -407,7 +394,7 @@ server <- function(input, output, session) {
     #Copy von erster Funktion noch einfügen
     paste(
       "<strong style=\"font-size:22px;\">",
-      "Die Anzahl der Personen, die sich im Durchschnitt in Ihrem Raum mit Covid-19 infizieren, beträgt:",
+      "Die Anzahl der Personen, die sich im Durchschnitt mit COVID-19 infizieren, beträgt:",
       "<font style=\"color:DodgerBlue;\">",
       #Hier war vorher individuelle Risk aus risk_of_1_person_in_room_being_infected mit digits = 3
       format(people_infected, digits = 1),
@@ -453,9 +440,9 @@ server <- function(input, output, session) {
     
     #infectious episode [d] *
     
-    if (input$inTabset == "Zug") {
+    if (input$inTabset == "Zugabteil") {
       zeit <- input$zeit3
-    } else if (input$inTabset == "Bar") {
+    } else if (input$inTabset == "Geburtstagsfeier") {
       zeit <- input$zeit2
     } else if (input$inTabset == "Großraumbüro") {
       zeit <- input$zeit
@@ -478,9 +465,9 @@ server <- function(input, output, session) {
     #Room Area in m square based on num people
     room_area <- input$raum
     
-    if (input$inTabset == "Zug") {
+    if (input$inTabset == "Zugabteil") {
       room_area <- input$raum3
-    } else if (input$inTabset == "Bar") {
+    } else if (input$inTabset == "Geburtstagsfeier") {
       room_area <- input$raum2
     } else if (input$inTabset == "Großraumbüro") {
       room_area <- input$raum
@@ -602,9 +589,9 @@ server <- function(input, output, session) {
     #risk of 1  person in room being infected [% / episode]
     
     
-    if (input$inTabset == "Zug") {
+    if (input$inTabset == "Zugabteil") {
       num_people <- input$people3
-    } else if (input$inTabset == "Bar") {
+    } else if (input$inTabset == "Geburtstagsfeier") {
       num_people <- input$people2
     } else if (input$inTabset == "Großraumbüro") {
       num_people <- input$people
@@ -692,9 +679,9 @@ server <- function(input, output, session) {
     
     #infectious episode [d] *
     
-    if (input$inTabset == "Zug") {
+    if (input$inTabset == "Zugabteil") {
       zeit <- input$zeit3
-    } else if (input$inTabset == "Bar") {
+    } else if (input$inTabset == "Geburtstagsfeier") {
       zeit <- input$zeit2
     } else if (input$inTabset == "Großraumbüro") {
       zeit <- input$zeit
@@ -717,9 +704,9 @@ server <- function(input, output, session) {
     #Room Area in m square based on num people
     room_area <- input$raum
     
-    if (input$inTabset == "Zug") {
+    if (input$inTabset == "Zugabteil") {
       room_area <- input$raum3
-    } else if (input$inTabset == "Bar") {
+    } else if (input$inTabset == "Geburtstagsfeier") {
       room_area <- input$raum2
     } else if (input$inTabset == "Großraumbüro") {
       room_area <- input$raum
@@ -841,9 +828,9 @@ server <- function(input, output, session) {
     #risk of 1  person in room being infected [% / episode]
     
     
-    if (input$inTabset == "Zug") {
+    if (input$inTabset == "Zugabteil") {
       num_people <- input$people3
-    } else if (input$inTabset == "Bar") {
+    } else if (input$inTabset == "Geburtstagsfeier") {
       num_people <- input$people2
     } else if (input$inTabset == "Großraumbüro") {
       num_people <- input$people
@@ -905,42 +892,34 @@ server <- function(input, output, session) {
   })
   
   
+  output$images <- renderPlot({
+    
+    
+    browser()
+    input3 <- 'gender_neutral'
+    foo <- ""
+    bar <- ""
+    
+    for (i in 1:3) {
+      filename <- normalizePath(file.path('./images',
+                                          paste(input3, '.png', sep = '')))
+      
+      filename <- filename[file.exists(filename)]
+      
+   
+      
+      pngs = lapply(filename, readPNG)
+      asGrobs = lapply(pngs, rasterGrob)
+    }
+    p <- grid.arrange(grobs=asGrobs, nrow = 1)
+  },width = 250)
+    
   
   
   
   
   output$image <- renderImage({
-    #browser()
-    input3 <- 'man_col_w'
     
-    input2 <- 'man_col_r'
-    #outfile <- tempfile(fileext = '.png')
-    
-    
-    
-    filename <- normalizePath(file.path('./images',
-                                        paste(input3, '.png', sep = '')))
-    filename2 <- normalizePath(file.path('./images',
-                                         paste(input2, '.png', sep = '')))
-    
-    inputs <- ""
-    
-    for (i in 1:5) {
-      paste(inputs, input3, sep = '')
-    }
-    
-    
-    list(src = filename,
-         alt = paste(input3, "Hier User Input"))
-    
-    
-    
-  }, deleteFile = FALSE)
-  
-  
-  
-  
-  output$text2 <- renderPlot({
     #LIST OF VARIABLES NECESSARY FOR CALCULATIONS BASED ON LELIEVELD (2020)
     
     ##RNA for 50% infection probability (D50)
@@ -969,9 +948,9 @@ server <- function(input, output, session) {
     
     #infectious episode [d] *
     
-    if (input$inTabset == "Zug") {
+    if (input$inTabset == "Zugabteil") {
       zeit <- input$zeit3
-    } else if (input$inTabset == "Bar") {
+    } else if (input$inTabset == "Geburtstagsfeier") {
       zeit <- input$zeit2
     } else if (input$inTabset == "Großraumbüro") {
       zeit <- input$zeit
@@ -994,9 +973,9 @@ server <- function(input, output, session) {
     #Room Area in m square based on num people
     room_area <- input$raum
     
-    if (input$inTabset == "Zug") {
+    if (input$inTabset == "Zugabteil") {
       room_area <- input$raum3
-    } else if (input$inTabset == "Bar") {
+    } else if (input$inTabset == "Geburtstagsfeier") {
       room_area <- input$raum2
     } else if (input$inTabset == "Großraumbüro") {
       room_area <- input$raum
@@ -1118,9 +1097,245 @@ server <- function(input, output, session) {
     #risk of 1  person in room being infected [% / episode]
     
     
-    if (input$inTabset == "Zug") {
+    if (input$inTabset == "Zugabteil") {
       num_people <- input$people3
-    } else if (input$inTabset == "Bar") {
+    } else if (input$inTabset == "Geburtstagsfeier") {
+      num_people <- input$people2
+    } else if (input$inTabset == "Großraumbüro") {
+      num_people <- input$people
+    }
+    
+    
+    
+    
+    foo <- dosis_infectious_episode * num_people
+    bar <- 1 - (1 - var_infect_prob) ^ foo
+    
+    risk_of_1_person_in_room_being_infected <- bar * 100
+    
+    
+    
+    if (input$distance == "k1m") {
+      infect_risk_individual <- infect_risk_individual
+    } else if (input$distance == "m1m") {
+      infect_risk_individual <- infect_risk_individual * 0.85
+    }
+    
+    
+    people_infected <-
+      num_people * (infect_risk_individual / 100)
+    
+    
+    
+    if (people_infected < 0.5) {
+      people_infected <- "Keine"
+    } else if (people_infected >= 0.5 && people_infected < 1.5) {
+      (people_infected <- 1)
+    }
+    
+    
+    
+    
+    #browser()
+    format(people_infected, digits = 1)
+    
+    input3 <- format(people_infected, digits = 1)
+    
+    filename <- normalizePath(file.path('./images/gender_neutral_all',
+                                        paste('FOLIE',input3, '.PNG', sep = '')))
+   
+    
+    list(src = filename,
+         alt = paste(input3, "Hier User Input"))
+    
+    
+    
+  }, deleteFile = FALSE)
+  
+  
+  
+  
+  output$text2 <- renderPlot({
+    #LIST OF VARIABLES NECESSARY FOR CALCULATIONS BASED ON LELIEVELD (2020)
+    
+    ##RNA for 50% infection probability (D50)
+    RNA_num <- 233
+    
+    #DEPOSITION PROPABILITY
+    deposition_prob <- 0.5
+    
+    #emission breathing [/cm³]
+    emission_breathing <- 0.06
+    
+    #emission speaking [/cm³]
+    emission_speaking <- 0.8
+    
+    #speaking / breathing ratio
+    speaking_breathing_rat <- 0.1
+    
+    #respiratory rate [l/min]
+    resp_rate <- 10
+    
+    #respiratory fluid RNA conc [/cm³]
+    resp_fluid_RNA_conc <- 500000000
+    
+    #mean wet aerosol diameter [um]
+    mean_aer_dia <- 5
+    
+    #infectious episode [d] *
+    
+    if (input$inTabset == "Zugabteil") {
+      zeit <- input$zeit3
+    } else if (input$inTabset == "Geburtstagsfeier") {
+      zeit <- input$zeit2
+    } else if (input$inTabset == "Großraumbüro") {
+      zeit <- input$zeit
+    }
+    
+    
+    inf_epis <- 0.16666666667 * zeit
+    
+    #virus lifetime in aerosol [h]
+    vir_life <- 1.7
+    #browser()
+    
+    #Das hier ändern in
+    #https://www.sciencedirect.com/science/article/abs/pii/S2210670720306119
+    #Wenn Distance 1.5m, dann finaler Wert * 0.8, z1u15 dann * 0.9, wenn k1m dann nix
+    
+    
+    #observe(print(numpeople()))
+    
+    #Room Area in m square based on num people
+    room_area <- input$raum
+    
+    if (input$inTabset == "Zugabteil") {
+      room_area <- input$raum3
+    } else if (input$inTabset == "Geburtstagsfeier") {
+      room_area <- input$raum2
+    } else if (input$inTabset == "Großraumbüro") {
+      room_area <- input$raum
+    }
+    
+    
+    #room height [m]** ** Very large room sizes violate the assumption of instantaneaous mixing of the air
+    room_height <- 2.4
+    
+    #infection probability [/RNA] calculated with RNA_num
+    infect_prob <- function(RNA_num) {
+      return (1 - 10 ^ (log10(0.5) / RNA_num))
+    }
+    var_infect_prob <- 1 - 10 ^ (log10(0.5) / RNA_num)
+    
+    #RNA content in aerosol
+    RNA_content <- function(resp_fluid_RNA_conc,
+                            mean_aer_dia) {
+      return (resp_fluid_RNA_conc * pi / 6 * (mean_aer_dia / 10000) ^ 3)
+    }
+    
+    var_RNA_content <-
+      (resp_fluid_RNA_conc * pi / 6 * (mean_aer_dia / 10000) ^ 3)
+    
+    #aerosol emission [/h]
+    aero_emission <-
+      function(emission_breathing,
+               emission_speaking,
+               speaking_breathing_rat,
+               resp_rate) {
+        return ((
+          emission_breathing * (1 - speaking_breathing_rat) + emission_speaking *
+            speaking_breathing_rat
+        ) * 1000 * resp_rate * 60
+        )
+      }
+    var_aero_emission <-
+      aero_emission(emission_breathing,
+                    emission_speaking,
+                    speaking_breathing_rat,
+                    resp_rate)
+    
+    
+    #aerosol conc [/l]
+    
+    aero_conc <-
+      function(var_aero_emission,
+               room_area,
+               room_height) {
+        return (var_aero_emission / (room_area * room_height * 1000))
+      }
+    var_aero_conc <- aero_conc(var_aero_emission,
+                               room_area,
+                               room_height)
+    
+    #RNA cont. aerosol conc [/l]
+    
+    
+    
+    
+    var_RNA_cont_aero_conc <-
+      var_aero_conc * var_RNA_content
+    
+    
+    #RNA dosis [/h]
+    RNA_dosis <-
+      function(var_RNA_cont_aero_conc,
+               resp_rate,
+               deposition_prob) {
+        return(var_RNA_cont_aero_conc * resp_rate * deposition_prob * 60)
+      }
+    var_RNA_dosis <- RNA_dosis(var_RNA_cont_aero_conc,
+                               resp_rate,
+                               deposition_prob)
+    
+    #room ventilation rate [/h]
+    #Normally generated through user input
+    if (input$air == "NoAir") {
+      room_vent_rate <- 0
+    } else if (input$air == "FensterGekippt") {
+      room_vent_rate <- 0.35
+    } else if (input$air == "Stoßlueften") {
+      room_vent_rate <- 2
+    } #else if (input$air == "Lueftungssystem") {
+    #room_vent_rate <- 9
+    #}
+    
+    
+    #total mask efficiency (exhaling + inhaling)
+    total_mask_effic <-
+      0 #Normally generated through user input
+    
+    if (input$masks == "No") {
+      total_mask_effic <- 0
+      
+    } else if (input$masks == "OP") {
+      total_mask_effic <- 0.7
+    } else if (input$masks == "FFP2") {
+      total_mask_effic <- 0.95
+    }
+    
+    
+    
+    # susceptible # persons / room
+    
+    #Normally generated through user input
+    #dosis 6 hours (per  day)*
+    dosis_6_hours <-
+      var_RNA_dosis / (room_vent_rate + 1 / vir_life) * (1 - total_mask_effic) *
+      6
+    
+    #dosis infectious episode
+    dosis_infectious_episode <- dosis_6_hours * inf_epis
+    
+    #infection risk of individual person [% / episode]
+    infect_risk_individual <-
+      (1 - (1 - var_infect_prob) ^ dosis_infectious_episode) * 100
+    
+    #risk of 1  person in room being infected [% / episode]
+    
+    
+    if (input$inTabset == "Zugabteil") {
+      num_people <- input$people3
+    } else if (input$inTabset == "Geburtstagsfeier") {
       num_people <- input$people2
     } else if (input$inTabset == "Großraumbüro") {
       num_people <- input$people
