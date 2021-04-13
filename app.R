@@ -27,7 +27,7 @@ library(shinydashboard)
 if (FALSE) {
   rsconnect::setAccountInfo(name = 'fau-erl-nue',
                             token = 'C4C6D39B6531E5AE28F944B0A52708F6',
-                            secret = 'SECRET')
+                            secret = 'FQ3hc7iXUqgrlruHsMOApt4AMc7npUFsgVX2qtl8')
   
   rsconnect::deployApp(getwd())
   
@@ -389,7 +389,7 @@ server <- function(input, output, session) {
     }
     
     
-    
+    getwd()
     
     #browser()
     format(people_infected, digits = 1)
@@ -398,7 +398,7 @@ server <- function(input, output, session) {
     
     filename <-
       normalizePath(file.path(
-        './images/gender_neutral_all',
+        getwd(),
         paste('FOLIE', input3, '.PNG', sep = '')
       ))
     
