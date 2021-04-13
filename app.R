@@ -109,7 +109,7 @@ ui <- shinyUI(
     
     
     (div(
-      HTML("<h3><b>Maßnahmen gegen Covid-19:</b></h3>")
+      HTML("<h3><b>Maßnahmen</b></h3>")
     )),
     sidebarLayout(
       position = "left",
@@ -149,15 +149,16 @@ ui <- shinyUI(
         
       ),
       
-      mainPanel(fluidRow(fluidRow(
+      mainPanel(fluidRow(
         column(6,
                plotOutput("text2")),
         column(
           6,
+          fluidRow(tableOutput("table")),
           fluidRow(htmlOutput("text3")),
           fluidRow(htmlOutput("text6")),
           fluidRow(htmlOutput("text1")),
-          fluidRow(imageOutput("image"))
+          fluidRow(imageOutput("image")
           
           
         )
@@ -171,7 +172,27 @@ server <- function(input, output, session) {
   #bs_themer()
   
   
-  
+  output$table <- renderText({
+    
+    
+    
+    # style=\"font-size:50px;\
+    
+    paste(
+      "<table>",
+      "<tr>",
+      "<th>", "Individuelles", "</th>",
+      "<th>", "Beliebiges", "</th>",
+      "</tr>",
+      "<tr>",
+      "<td>", 0.85, "</td>",
+      "<td>", 0.96, "</td>",
+      "</tr>",
+      "</table>"
+    )
+    
+    
+  })
   
   
   output$image <- renderImage({
@@ -388,25 +409,17 @@ server <- function(input, output, session) {
       people_infected <- 1
     }
     
-    
-    getwd()
-    
     #browser()
     format(people_infected, digits = 1)
     
     input3 <- format(people_infected, digits = 1)
     
-    filename <-
-      normalizePath(file.path(
-        getwd(),
-        paste('FOLIE', input3, '.PNG', sep = '')
-      ))
-    
+    filename <- normalizePath(file.path('./images',
+        paste('Folie', input3, '.png', sep = '')))
     
     list(
       src = filename,
       width = "90%",
-      
       alt = paste(input3, "0")
     )
     
@@ -414,7 +427,8 @@ server <- function(input, output, session) {
     
   }, deleteFile = FALSE)
   
- 
+
+  
   
   #eventReactive()
   output$text1 <- renderText({
@@ -1525,15 +1539,16 @@ server <- function(input, output, session) {
     
     
     p <-
-      ggplot(data = df, aes(x = reorder(choices, -Ansteckungswahrscheinlichkeit), y = Ansteckungswahrscheinlichkeit, fill = choices)) + geom_bar(stat = "identity", show.legend = FALSE) + 
-      theme_minimal() + ylim(0,0.6)
+      ggplot(data = df, aes(x = reorder(choices, -Ansteckungswahrscheinlichkeit), y = Ansteckungswahrscheinlichkeit, fill = choices)) + geom_bar(stat = "identity", show.legend = FALSE, width = 0.7) + 
+      theme_minimal() + ylim(0,1.0)
     p <- p + theme(legend.position="bottom", )
     p <- p+scale_fill_brewer(palette="Blues")
-    p <- p + labs(x = "", y = "Individuelle Ansteckungswahrscheinlichkeit") + theme(
-      axis.title.x = element_blank(),
-      axis.title.y = element_text(color = "dodgerblue1",size = 16, face = "bold"),
-      axis.text.x = element_text(size = 16, face = "bold"),
-      axis.text.y = element_text(size = 16, face = "bold")
+    p <- p + labs(x = "Eingehaltene Maßnahmen", y = "Ihre Infektionswahrscheinlichkeit") + scale_y_continuous(labels = function(x) paste0(x*100, "%"), limits = c(0,1)) + geom_text(aes(label = paste(round((Ansteckungswahrscheinlichkeit*100), digits = 1),"%"), vjust = -0.6)) + theme(
+      axis.title.x = element_text(color = "black",size = 16, face = "bold", margin = margin(t=5, r= 0, b= 0, l = 0)),
+      axis.title.y = element_text(color = "black",size = 16, face = "bold", margin = margin(t=0, r= 5, b= 0, l = 0)),
+      axis.text.x = element_text(size = 14),
+      axis.text.y = element_text(size = 14),
+      
       
     )
     #p+scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"))
