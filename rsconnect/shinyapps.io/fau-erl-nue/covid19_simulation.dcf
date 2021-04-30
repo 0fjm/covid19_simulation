@@ -5,6 +5,7 @@ account: fau-erl-nue
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3913556
-bundleId: 4475219
+bundleId: 4476780
 url: https://fau-erl-nue.shinyapps.io/covid19_simulation/
-when: 1618491687.1816
+when: 1618513766.32482
+lastSyncTime: 1618513766.32482
